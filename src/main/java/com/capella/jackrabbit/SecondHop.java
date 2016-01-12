@@ -1,13 +1,12 @@
 package com.capella.jackrabbit;
 
 import org.apache.jackrabbit.core.TransientRepository;
-import org.apache.jackrabbit.core.security.principal.PrincipalImpl;
 
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.security.*;
+import javax.jcr.security.Privilege;
 
 /**
  * Second hop example. Stores, retrieves, and removes example content.
@@ -29,18 +28,7 @@ public class SecondHop {
 
         try {
             Node root = session.getRootNode();
-            AccessControlManager acm = session.getAccessControlManager();
-            AccessControlPolicyIterator it =
-                    acm.getApplicablePolicies(root.getPath());
-
-            while (it.hasNext()) {
-                AccessControlPolicy acp = it.nextAccessControlPolicy();
-                Privilege[] privileges = new Privilege[]{acm.privilegeFromName(Privilege.JCR_WRITE)};
-
-                ((AccessControlList) acp).addAccessControlEntry(new PrincipalImpl(session.getUserID()), privileges);
-
-                acm.setPolicy(root.getPath(), acp);
-            }
+            AccessControlModule.modifyNodeAccess(session, root, Privilege.JCR_WRITE);
             // Store content 
             Node hello = root.addNode("hello");
             Node world = hello.addNode("world");
