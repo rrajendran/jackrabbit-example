@@ -1,11 +1,18 @@
 package com.capella.jackrabbit;
 
+import org.apache.commons.io.FileUtils;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.jcr.RepositoryException;
+import java.io.*;
+import java.net.URL;
+
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -20,9 +27,23 @@ public class JackRabbitOperationsTest {
 
     @org.junit.Test
     public void testAddText() throws Exception {
-        jackRabbitOperations.addText("Test message");
-        String text = jackRabbitOperations.retrieveText();
+        jackRabbitOperations.addText("hello", "Test message");
+        String text = jackRabbitOperations.retrieveText("hello");
         assertThat(text, is("Test message"));
+    }
+
+    @Test
+    public void testPdfStore() throws IOException, RepositoryException {
+        URL url = JackRabbitOperations.class.getClassLoader().getResource("sample.pdf");
+        File file = FileUtils.toFile(url);
+        InputStream stream = new BufferedInputStream(new FileInputStream(file));
+        String path = "hello/pdfs";
+
+        jackRabbitOperations.writeBinaryFile(path, stream);
+        jackRabbitOperations.readBinaryFile(path);
+
+        File f = new File("target/Alfresco_E0_Training.pdf");
+        assertThat(f, is(notNullValue()));
     }
 
 

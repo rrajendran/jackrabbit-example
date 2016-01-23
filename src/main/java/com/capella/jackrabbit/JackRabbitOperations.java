@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import javax.jcr.*;
+import javax.jcr.security.Privilege;
+import java.io.*;
 
 /**
  * Second hop example. Stores, retrieves, and removes example content.
@@ -13,8 +15,8 @@ import javax.jcr.*;
 
 @Component
 public class JackRabbitOperations {
-    public static final String NODE_PATH = "hello/world";
     @Autowired
+    @Qualifier("repository")
     private Repository repository;
     @Autowired
     private Session session;
@@ -23,34 +25,50 @@ public class JackRabbitOperations {
     private Node rootNode;
 
     public JackRabbitOperations() throws RepositoryException {
-
+        //repository = new TransientRepository();
     }
 
 
-    public void addText(String message) throws RepositoryException {
-        //AccessControlModule.modifyNodeAccess(session, rootNode, Privilege.JCR_WRITE);
+    /**
+     * Add text to node
+     *
+     * @param message
+     * @throws RepositoryException
+     */
+    public void addText(String path, String message) throws RepositoryException {
+        AccessControlModule.modifyNodeAccess(session, rootNode, Privilege.JCR_WRITE);
         // Store content
         final Node hello;
-        if (!rootNode.hasNode(NODE_PATH)) {
-            hello = rootNode.addNode(NODE_PATH);
+        if (!rootNode.hasNode(path)) {
+            hello = rootNode.addNode(path);
         } else {
-            hello = rootNode.getNode(NODE_PATH);
+            hello = rootNode.getNode(path);
         }
 
         hello.setProperty("message", message);
         session.save();
     }
 
-    public String retrieveText() throws RepositoryException {
+    /**
+     * Retrive stored text
+     *
+     * @return
+     * @throws RepositoryException
+     */
+    public String retrieveText(String path) throws RepositoryException {
         // Retrieve content
-        if (rootNode.hasNode(NODE_PATH)) {
-            Node node = rootNode.getNode("hello/world");
+        if (rootNode.hasNode(path)) {
+            Node node = rootNode.getNode(path);
             return node.getProperty("message").getString();
         }
         return null;
     }
 
-
+    /**
+     * Remove Node
+     *
+     * @throws RepositoryException
+     */
     public void removeNode() throws RepositoryException {
         NodeIterator nodes = rootNode.getNodes();
         while (nodes.hasNext()) {
@@ -60,5 +78,53 @@ public class JackRabbitOperations {
         session.save();
     }
 
+    /**
+     * Store binary file
+     *
+     * @throws RepositoryException
+     * @throws FileNotFoundException
+     */
+    public void writeBinaryFile(String path, InputStream inputStream) throws RepositoryException, FileNotFoundException {
+        Node folder = null;
 
+        if (!rootNode.hasNode(path)) {
+            folder = rootNode.addNode(path);
+        } else {
+            folder = rootNode.getNode(path);
+        }
+
+        Node nodeFile = folder.addNode("Article.pdf", "nt:file");
+        Node content = nodeFile.addNode("jcr:content", "nt:resource");
+        Binary binary = session.getValueFactory().createBinary(inputStream);
+        content.setProperty("jcr:data", binary);
+        content.setProperty("jcr:mimeType", "application/pdf");
+
+    }
+
+    /**
+     * Read binary file
+     *
+     * @throws RepositoryException
+     * @throws IOException
+     */
+    public void readBinaryFile(String path) throws RepositoryException, IOException {
+        Node node = rootNode.getNode(path);
+        Node file = node.getNode("Article.pdf");
+        Node content = file.getNode("jcr:content");
+        String contentPath = content.getPath();
+        Binary bin = session.getNode(contentPath).getProperty("jcr:data").getBinary();
+
+        InputStream stream = bin.getStream();
+        File f = new File("target/Alfresco_E0_Training.pdf");
+
+        OutputStream out = new FileOutputStream(f);
+        byte buf[] = new byte[1024];
+        int len;
+        while ((len = stream.read(buf)) > 0)
+            out.write(buf, 0, len);
+        out.close();
+        stream.close();
+        System.out.println("\nFile is created...................................");
+
+    }
 } 
