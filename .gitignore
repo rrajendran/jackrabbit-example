@@ -13,6 +13,8 @@ hs_err_pid*
 
 #jackrabbit
 repository/
+workspaces/
+version/
 target/
 .idea
 *.iml
