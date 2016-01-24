@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.URL;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -43,7 +42,7 @@ public class JackRabbitOperationsTest {
         jackRabbitOperations.readBinaryFile(path);
 
         File f = new File("target/Alfresco_E0_Training.pdf");
-        assertThat(f, is(notNullValue()));
+        assertThat(f.length(), is(3003160L));
     }
 
 

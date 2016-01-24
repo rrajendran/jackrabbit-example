@@ -1,0 +1,18 @@
+----------------------------------------------------------------
+2016-01-24 03:53:16.471 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.5.3.0 - (802917): instance a816c00e-0152-71c3-b148-00000cd19d70
+on database directory /Users/ramesh/stash/asylum/jackrabbit-example/target/version/db  
+
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+2016-01-24 03:53:17.353 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.5.3.0 - (802917): instance 9a4840c2-0152-71c3-b148-00000cd19d70
+on database directory /Users/ramesh/stash/asylum/jackrabbit-example/target/workspaces/default/db  
+
+Database Class Loader started - derby.database.classpath=''
+----------------------------------------------------------------
+2016-01-24 03:53:18.517 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.5.3.0 - (802917): instance 247b4177-0152-71c3-b148-00000cd19d70
+on database directory /Users/ramesh/stash/asylum/jackrabbit-example/target/workspaces/security/db  
+
+Database Class Loader started - derby.database.classpath=''
