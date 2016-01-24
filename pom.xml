@@ -16,6 +16,7 @@
         <java.version>1.8</java.version>
         <junit.version>4.12</junit.version>
         <spring.version>4.2.2.RELEASE</spring.version>
+        <jackrabbit-standalone.version>1.6.5</jackrabbit-standalone.version>
     </properties>
 
     <dependencies>
@@ -84,6 +85,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jackrabbit</groupId>
+            <artifactId>jackrabbit-standalone</artifactId>
+            <version>${jackrabbit-standalone.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
