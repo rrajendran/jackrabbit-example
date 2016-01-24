@@ -4,9 +4,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import java.io.*;
 import java.net.URL;
@@ -23,6 +25,10 @@ public class JackRabbitOperationsTest {
 
     @Autowired
     private JackRabbitOperations jackRabbitOperations;
+
+    @Autowired
+    @Qualifier("rootNode")
+    private Node rootNode;
 
     @org.junit.Test
     public void testAddText() throws Exception {
@@ -45,5 +51,11 @@ public class JackRabbitOperationsTest {
         assertThat(f.length(), is(3003160L));
     }
 
+
+    @Test
+    public void testRemoveNodes() throws RepositoryException {
+        jackRabbitOperations.removeNode("hello/pdfs");
+        assertThat(rootNode.hasNode("hello/pdfs"), is(false));
+    }
 
 }

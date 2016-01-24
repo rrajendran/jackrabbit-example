@@ -25,7 +25,7 @@ public class JackRabbitOperations {
     private Node rootNode;
 
     public JackRabbitOperations() throws RepositoryException {
-        //repository = new TransientRepository();
+
     }
 
 
@@ -69,13 +69,15 @@ public class JackRabbitOperations {
      *
      * @throws RepositoryException
      */
-    public void removeNode() throws RepositoryException {
-        NodeIterator nodes = rootNode.getNodes();
-        while (nodes.hasNext()) {
-            Node node = nodes.nextNode();
+    public void removeNode(String path) throws RepositoryException {
+        if (rootNode.hasNode(path)) {
+            Node node = rootNode.getNode(path);
             node.remove();
+            session.save();
         }
-        session.save();
+
+        System.out.println("******" + rootNode.hasNode(path));
+
     }
 
     /**
