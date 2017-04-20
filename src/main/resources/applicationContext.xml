@@ -20,7 +20,7 @@
     </bean>
 
     <bean id="config" class="org.apache.jackrabbit.core.config.RepositoryConfig" factory-method="create">
-        <constructor-arg index="0" value="src/main/resources/repository.xml"/>
+        <constructor-arg index="0" value="repository.xml"/>
         <constructor-arg index="1" value="target/"/>
     </bean>
 

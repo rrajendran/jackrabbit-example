@@ -1,6 +1,7 @@
 package com.capella.jackrabbit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.tika.io.IOUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,13 +46,16 @@ public class JackRabbitOperationsTest {
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
         String path = "hello/pdfs";
 
-        jackRabbitOperations.writeBinaryFile(path, stream);
-        jackRabbitOperations.readBinaryFile(path);
+        String identifier = jackRabbitOperations.writeBinaryFile(path, stream);
+        System.out.println(identifier);
+        assertThat(identifier, is(notNullValue()));
 
-        File f = new File("target/Alfresco_E0_Training.pdf");
+        //InputStream inputStream = jackRabbitOperations.readBinaryFile(path);
 
-        assertThat(f, is(notNullValue()));
-        assertThat(f.length(), is(3003160L));
+        InputStream fileByIdentifier = jackRabbitOperations.readBinaryFile(identifier);
+
+
+        IOUtils.contentEquals(fileByIdentifier, JackRabbitOperations.class.getClassLoader().getResourceAsStream("sample.pdf"));
     }
 
 

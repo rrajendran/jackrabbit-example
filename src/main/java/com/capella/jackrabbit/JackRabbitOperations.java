@@ -7,7 +7,12 @@ import org.springframework.stereotype.Component;
 
 import javax.jcr.*;
 import javax.jcr.security.Privilege;
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
+import static javax.jcr.Property.JCR_DATA;
+import static javax.jcr.nodetype.NodeType.NT_FILE;
+import static javax.jcr.nodetype.NodeType.NT_RESOURCE;
 
 /**
  * Second hop example. Stores, retrieves, and removes example content.
@@ -18,8 +23,10 @@ public class JackRabbitOperations {
     @Autowired
     @Qualifier("repository")
     private Repository repository;
+
     @Autowired
     private Session session;
+
     @Autowired
     @Qualifier("rootNode")
     private Node rootNode;
@@ -86,8 +93,8 @@ public class JackRabbitOperations {
      * @throws RepositoryException
      * @throws FileNotFoundException
      */
-    public void writeBinaryFile(String path, InputStream inputStream) throws RepositoryException, FileNotFoundException {
-        Node folder = null;
+    public String writeBinaryFile(String path, InputStream inputStream) throws RepositoryException, FileNotFoundException {
+        Node folder;
 
         if (!rootNode.hasNode(path)) {
             folder = rootNode.addNode(path);
@@ -95,11 +102,13 @@ public class JackRabbitOperations {
             folder = rootNode.getNode(path);
         }
 
-        Node nodeFile = folder.addNode("Article.pdf", "nt:file");
-        Node content = nodeFile.addNode("jcr:content", "nt:resource");
+        Node nodeFile = folder.addNode("Article.pdf", NT_FILE);
+        Node content = nodeFile.addNode(Property.JCR_CONTENT, NT_RESOURCE);
         Binary binary = session.getValueFactory().createBinary(inputStream);
-        content.setProperty("jcr:data", binary);
-        content.setProperty("jcr:mimeType", "application/pdf");
+
+        content.setProperty(Property.JCR_DATA, binary);
+        content.setProperty(Property.JCR_MIMETYPE, "application/pdf");
+        return content.getIdentifier();
 
     }
 
@@ -107,26 +116,11 @@ public class JackRabbitOperations {
      * Read binary file
      *
      * @throws RepositoryException
-     * @throws IOException
      */
-    public void readBinaryFile(String path) throws RepositoryException, IOException {
-        Node node = rootNode.getNode(path);
-        Node file = node.getNode("Article.pdf");
-        Node content = file.getNode("jcr:content");
-        String contentPath = content.getPath();
-        Binary bin = session.getNode(contentPath).getProperty("jcr:data").getBinary();
-
-        InputStream stream = bin.getStream();
-        File f = new File("target/Alfresco_E0_Training.pdf");
-
-        OutputStream out = new FileOutputStream(f);
-        byte buf[] = new byte[1024];
-        int len;
-        while ((len = stream.read(buf)) > 0)
-            out.write(buf, 0, len);
-        out.close();
-        stream.close();
-        System.out.println("\nFile is created...................................");
+    public InputStream readBinaryFile(String identifier) throws RepositoryException {
+        Node nodeByIdentifier = session.getNodeByIdentifier(identifier);
+        Binary binary = nodeByIdentifier.getProperty(JCR_DATA).getBinary();
+        return binary.getStream();
 
     }
 } 
