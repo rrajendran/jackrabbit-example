@@ -48,7 +48,6 @@ public class OakFileRepository {
         Binary binary = session.getValueFactory().createBinary(inputStream);
         content.setProperty(Property.JCR_DATA, binary);
 
-        session.save();
         return content.getIdentifier();
 
     }
