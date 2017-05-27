@@ -1,0 +1,26 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd  ">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.capella.jackrabbit.oak"/>
+
+    <context:property-placeholder location="classpath:jackrabbit-oak.properties"/>
+
+
+    <bean id="oakSessionFactory" class="com.capella.jackrabbit.oak.OakSessionFactory" init-method="create"/>
+
+    <bean id="session" class="javax.jcr.Session" factory-bean="oakSessionFactory" factory-method="getSession">
+        <constructor-arg value="${repository.path}"/>
+        <constructor-arg ref="simpleCredentials"/>
+    </bean>
+
+    <bean id="simpleCredentials" class="javax.jcr.SimpleCredentials">
+        <constructor-arg value="${jackrabbit.oak.username}"/>
+        <constructor-arg value="${jackrabbit.oak.password}"/>
+    </bean>
+
+    <bean id="rootNode" factory-bean="session" factory-method="getRootNode"/>
+</beans>
