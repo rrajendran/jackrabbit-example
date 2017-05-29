@@ -32,7 +32,7 @@ public class OakFileRepository {
      * @throws RepositoryException
      * @throws FileNotFoundException
      */
-    public String writeBinaryFile(String path, InputStream inputStream, String documentName) throws RepositoryException, FileNotFoundException {
+    public String writeBinaryFile(String path, InputStream inputStream, String documentName, String mimeType) throws RepositoryException {
         Node folder;
         Node rootNode = session.getRootNode();
         if (!rootNode.hasNode(path)) {
@@ -43,7 +43,7 @@ public class OakFileRepository {
 
         Node nodeFile = folder.addNode(documentName, NT_FILE);
         Node content = nodeFile.addNode(Property.JCR_CONTENT, NT_RESOURCE);
-        content.setProperty(Property.JCR_MIMETYPE, "application/pdf");
+        content.setProperty(Property.JCR_MIMETYPE, mimeType);
 
         Binary binary = session.getValueFactory().createBinary(inputStream);
         content.setProperty(Property.JCR_DATA, binary);

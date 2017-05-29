@@ -34,7 +34,7 @@ public class OakFileRepositoryTest {
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
         String path = "hello/pdfs";
 
-        String identifier = oakFileRepository.writeBinaryFile(path, stream, "sample.pdf");
+        String identifier = oakFileRepository.writeBinaryFile(path, stream, "sample.pdf", "application/pdf");
         System.out.println(identifier);
         assertThat(identifier, is(notNullValue()));
 
