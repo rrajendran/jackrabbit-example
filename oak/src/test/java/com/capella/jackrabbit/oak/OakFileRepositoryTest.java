@@ -32,7 +32,7 @@ public class OakFileRepositoryTest {
         URL url = OakFileRepositoryTest.class.getClassLoader().getResource("sample.pdf");
         File file = FileUtils.toFile(url);
         InputStream stream = new BufferedInputStream(new FileInputStream(file));
-        String path = "hello/pdfs";
+        String path = "/hello/pdfs";
 
         String identifier = oakFileRepository.writeBinaryFile(path, stream, "sample.pdf", "application/pdf");
         System.out.println(identifier);

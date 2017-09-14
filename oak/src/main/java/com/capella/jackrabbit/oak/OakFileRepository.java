@@ -35,7 +35,7 @@ public class OakFileRepository {
     public String writeBinaryFile(String path, InputStream inputStream, String documentName, String mimeType) throws RepositoryException {
         Node folder;
         Node rootNode = session.getRootNode();
-        if (!rootNode.hasNode(path)) {
+        if (session.itemExists(path)) {
             folder = rootNode.addNode(path);
         } else {
             folder = rootNode.getNode(path);
@@ -63,7 +63,12 @@ public class OakFileRepository {
         return binary.getStream();
     }
 
-
+    /**
+     *
+     * @param uuid
+     * @return
+     * @throws RepositoryException
+     */
     public Map<String, Object> getProperties(String uuid) throws RepositoryException {
         Node nodeByIdentifier = session.getNodeByIdentifier(uuid);
         PropertyIterator properties = nodeByIdentifier.getProperties();
